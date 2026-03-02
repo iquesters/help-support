@@ -1,0 +1,33 @@
+{
+  "name": "iquesters/help-support",
+  "description": "Help support package",
+  "type": "library",
+  "require": {
+    "laravel/framework": "^10.0|^11.0|^12.0"
+  },
+  "require-dev": {
+    "laravel/tinker": "^2.8",
+    "laravel/pint": "^1.0"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Iquesters\\HelpSupport\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Pritam Bag",
+      "email": "pritam02b@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Iquesters\\HelpSupport\\HelpSupportServiceProvider"
+      ]
+    }
+  }
+}
