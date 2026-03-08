@@ -101,14 +101,6 @@
 
 @push('scripts')
 <script>
-document.getElementById('docSearch').addEventListener('keydown', function(e) {
-    if (e.key !== 'Enter') return;
-    const val = this.value.toLowerCase().trim();
-    if (!val) return;
-    if      (val.includes('user')) window.location.href = '/help-support/docs.user_users';
-    else if (val.includes('role')) window.location.href = '/help-support/docs.user_roles';
-    else if (val.includes('perm')) window.location.href = '/help-support/docs.user_perms';
-});
 function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
 function sendChat() {
     const input = document.getElementById('chatInput');
