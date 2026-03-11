@@ -7,7 +7,7 @@
         <a href="/help-support/helps.index" class="btn btn-sm btn-outline-secondary">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
-        <h5 class="fw-bold mb-0"><i class="fa-solid fa-cubes me-2"></i>All Modules</h5>
+        <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-cubes me-2"></i>Module Documentation</h5>
     </div>
 </div>
 
@@ -45,17 +45,19 @@ async function loadModules() {
             const iconMeta = (mod.meta || []).find(m => m.meta_key === 'module_icon');
             const icon     = iconMeta ? iconMeta.meta_value : 'fa-solid fa-cube';
             container.innerHTML += `
-                <div class="col-md-4 col-sm-6">
-                    <div class="border rounded-3 p-3 h-100 d-flex flex-column">
-                        <i class="${icon} fa-lg mb-2 text-primary d-block"></i>
-                        <h6 class="fw-bold small mb-1">${mod.name}</h6>
-                        <p class="text-secondary small mb-2">${mod.description}</p>
-                        <a href="#" class="btn btn-sm btn-outline-primary mt-auto">
-                            <i class="fa-solid fa-book me-1"></i>View Documentation
-                        </a>
-                    </div>
-                </div>
-            `;
+    <div class="col-md-4 col-sm-6">
+        <div class="border rounded-3 p-3 h-100">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="${icon} text-primary"></i>
+                <h6 class="fw-bold small mb-0">${mod.name}</h6>
+            </div>
+            <p class="text-secondary small mb-2">${mod.description}</p>
+            <a href="/help-support/helps.docs?module=${mod.name}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-solid fa-book me-1"></i>View Docs
+            </a>
+        </div>
+    </div>
+`;
         });
     } catch(err) {
         container.innerHTML = '<div class="col-12 text-center text-danger small py-4"><i class="fa-solid fa-triangle-exclamation me-1"></i>Failed to load modules.</div>';
