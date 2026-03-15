@@ -47,19 +47,10 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
-const repoMap = {
-    'user-interface':  'user-interface',
-    'user-management': 'user-management',
-    'organisation':    'organisation',
-    'smart-messenger': 'smart-messenger',
-    'integration':     'integration',
-    'foundation':      'foundation',
-    'dev':             'dev',
-};
 
 const params     = new URLSearchParams(window.location.search);
 const moduleName = params.get('module') || '';
-const repoName   = repoMap[moduleName] || moduleName;
+const repoName   = moduleName;
 
 document.getElementById('pageTitle').textContent = moduleName + ' — Docs';
 
