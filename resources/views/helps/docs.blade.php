@@ -50,6 +50,7 @@
 
 const params     = new URLSearchParams(window.location.search);
 const moduleName = params.get('module') || '';
+const moduleUid  = params.get('uid')    || '';
 const repoName   = moduleName;
 
 document.getElementById('pageTitle').textContent = moduleName + ' — Docs';
