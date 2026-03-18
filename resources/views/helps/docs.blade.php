@@ -70,10 +70,10 @@ renderer.heading = function(text, level) {
 async function loadFileList() {
     const fileList   = document.getElementById('fileList');
     const docContent = document.getElementById('docContent');
-    const apiUrl     = `https://api.github.com/repos/iquesters/${repoName}/contents/docs`;
+    const apiUrl = `/help-support/docs/files/${repoName}`;
 
     try {
-        const res = await fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+        const res = await fetch(apiUrl);
 
         if (!res.ok) {
             fileList.innerHTML = `

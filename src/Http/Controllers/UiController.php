@@ -2,6 +2,8 @@
 
 namespace Iquesters\HelpSupport\Http\Controllers;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -30,6 +32,19 @@ class UiController extends Controller
         }
 
         return view($resolvedView);
+    }
+
+    public function getModuleDocs(string $module)
+    {
+        $files = Cache::remember("github_docs_{$module}", now()->addHours(6), function () use ($module) {
+            $response = Http::withHeaders([
+                'Accept' => 'application/vnd.github.v3+json'
+            ])->get("https://api.github.com/repos/iquesters/{$module}/contents/docs");
+
+            return $response->ok() ? $response->json() : [];
+        });
+
+        return response()->json($files);
     }
 
     protected function resolvePackageViewName(string $viewName): string
