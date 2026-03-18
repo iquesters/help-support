@@ -26,7 +26,7 @@
 
 @push('scripts')
 <script>
-const SANCTUM_TOKEN = '77|SWw2PukgeCWf1m9ZqfvbZ41qfVP0SbSgcJRlB8KU1ac19af1';
+const SANCTUM_TOKEN = '79|0r1tKP0WcXAHr3dPVxj7Ahxp4zgzrOd1D4q0ixnKfdde7f15';
 
 async function loadModules() {
     const container = document.getElementById('modulesContainer');
