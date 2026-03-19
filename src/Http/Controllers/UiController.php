@@ -39,10 +39,10 @@ class UiController extends Controller
         $normalizedView = preg_replace('/\.+/', '.', $normalizedView);
         $normalizedView = ltrim((string) $normalizedView, '.');
 
-        if (str_starts_with($normalizedView, 'helpsupport::')) {
+        if (str_starts_with($normalizedView, 'help-support::')) {
             return $normalizedView;
         }
 
-        return 'helpsupport::' . $normalizedView;
+        return 'help-support::' . $normalizedView;
     }
 }

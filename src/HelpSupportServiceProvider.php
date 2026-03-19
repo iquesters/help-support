@@ -32,10 +32,10 @@ class HelpSupportServiceProvider extends ServiceProvider
     {
         $routesPath = __DIR__ . '/../routes/web.php';
 
-        if (!is_file($routesPath)) {
-            Log::debug('Help support routes file not found, skipping route registration', [
+        if (! is_file($routesPath)) {
+            Log::warning('Help support routes file not found, skipping route registration', [
                 'provider' => static::class,
-                'path' => $routesPath,
+                'path'     => $routesPath,
             ]);
             return;
         }
@@ -44,7 +44,7 @@ class HelpSupportServiceProvider extends ServiceProvider
 
         Log::debug('Help support routes registered', [
             'provider' => static::class,
-            'path' => $routesPath,
+            'path'     => $routesPath,
         ]);
     }
 
@@ -52,20 +52,24 @@ class HelpSupportServiceProvider extends ServiceProvider
     {
         $viewsPath = __DIR__ . '/../resources/views';
 
-        if (!is_dir($viewsPath)) {
-            Log::debug('Help support views directory not found, skipping view registration', [
+        if (! is_dir($viewsPath)) {
+            Log::warning('Help support views directory not found, skipping view registration', [
                 'provider' => static::class,
-                'path' => $viewsPath,
+                'path'     => $viewsPath,
             ]);
             return;
         }
 
-        $this->loadViewsFrom($viewsPath, 'helpsupport');
+        $this->loadViewsFrom($viewsPath, 'help-support');
+
+        $this->publishes([
+            $viewsPath => resource_path('views/vendor/help-support'),
+        ], 'help-support-views');
 
         Log::debug('Help support views registered', [
-            'provider' => static::class,
-            'path' => $viewsPath,
-            'namespace' => 'helpsupport',
+            'provider'  => static::class,
+            'path'      => $viewsPath,
+            'namespace' => 'help-support',
         ]);
     }
 }
