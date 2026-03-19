@@ -4,7 +4,7 @@
 
 <div class="bg-body border-bottom py-3">
     <div class="container-fluid px-4 d-flex align-items-center gap-3">
-        <a href="/help-support/helps.docs?module=${mod.name}" class="btn btn-sm btn-outline-primary align-self-start">
+        <a href="/help-support/helps.index" class="btn btn-sm btn-outline-primary align-self-start">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
         <div>
@@ -26,12 +26,12 @@
 
 @push('scripts')
 <script>
-const SANCTUM_TOKEN = '73|kj4hcKK3sDU5qycqLNeEdKooy32JJPYl7pXnMyjb9c037db4';
+const SANCTUM_TOKEN = '79|0r1tKP0WcXAHr3dPVxj7Ahxp4zgzrOd1D4q0ixnKfdde7f15';
 
 async function loadModules() {
     const container = document.getElementById('modulesContainer');
     try {
-        const res = await fetch('https://knorai.com/api/entity/list/modules', {
+        const res = await fetch('https://vps.knorai.com/api/entity/list/modules', {
             headers: {
                 'Accept':        'application/json',
                 'Authorization': 'Bearer ' + SANCTUM_TOKEN
@@ -58,7 +58,7 @@ async function loadModules() {
                         </div>
                         <p class="text-secondary small mb-3 flex-grow-1">${mod.description}</p>
                         <div>
-    <a href="/help-support/helps.docs?module=${mod.name}" class="btn btn-sm btn-outline-primary">
+    <a href="/help-support/helps.docs?module=${mod.name}&uid=${mod.uid}" class="btn btn-sm btn-outline-primary">
         <i class="fa-solid fa-book me-1"></i>View Docs
     </a>
 </div>

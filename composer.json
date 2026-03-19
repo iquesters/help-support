@@ -1,5 +1,6 @@
 {
   "name": "iquesters/help-support",
+  "version": "1.0.0",
   "description": "Help support package",
   "type": "library",
   "require": {

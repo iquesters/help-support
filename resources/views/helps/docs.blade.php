@@ -20,7 +20,6 @@
         {{-- LEFT SIDEBAR --}}
         <div class="col-md-3">
             <div class="border rounded-3 p-2 h-100">
-                <p class="fw-bold small text-secondary mb-2 px-1"><i class="fa-solid fa-folder-open me-2 text-primary"></i>Documents</p>
                 <div id="fileList">
                     <div class="text-secondary small text-center py-3">
                         <i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...
@@ -30,8 +29,8 @@
         </div>
 
         {{-- RIGHT CONTENT --}}
-        <div class="col-md-9">
-            <div class="border rounded-3 p-3 h-100" id="docContent">
+        <div class="col-md-9" style="position:sticky;top:1rem;height:fit-content;">
+            <div class="border rounded-3 p-3" id="docContent" style="height:85vh;overflow-y:auto;">
                 <div class="text-secondary small text-center py-5">
                     <i class="fa-solid fa-spinner fa-spin fa-lg mb-2 d-block"></i>
                     Loading...
@@ -47,21 +46,13 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
-const repoMap = {
-    'user-interface':  'user-interface',
-    'user-management': 'user-management',
-    'organisation':    'organisation',
-    'smart-messenger': 'smart-messenger',
-    'integration':     'integration',
-    'foundation':      'foundation',
-    'dev':             'dev',
-};
 
 const params     = new URLSearchParams(window.location.search);
 const moduleName = params.get('module') || '';
-const repoName   = repoMap[moduleName] || moduleName;
+const moduleUid  = params.get('uid')    || '';
+const repoName   = moduleName;
 
-document.getElementById('pageTitle').textContent = moduleName + ' — Docs';
+document.getElementById('pageTitle').textContent = moduleName + ' — Documents';
 
 const renderer = new marked.Renderer();
 renderer.heading = function(text, level) {
@@ -79,10 +70,10 @@ renderer.heading = function(text, level) {
 async function loadFileList() {
     const fileList   = document.getElementById('fileList');
     const docContent = document.getElementById('docContent');
-    const apiUrl     = `https://api.github.com/repos/iquesters/${repoName}/contents/docs`;
+    const apiUrl = `/help-support/docs/files/${repoName}`;
 
     try {
-        const res = await fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+        const res = await fetch(apiUrl);
 
         if (!res.ok) {
             fileList.innerHTML = `
