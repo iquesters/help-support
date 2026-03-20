@@ -4,11 +4,11 @@
 
 <div class="bg-body border-bottom py-2">
     <div class="container-fluid px-3 d-flex align-items-center gap-3">
-        <a href="/help-support/helps.module" class="btn btn-sm btn-outline-primary">
+        <a href="/help-support/helps.module" class="btn btn-sm btn-outline-dark align-self-start">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
         <div>
-            <h6 class="fw-bold mb-0 text-body"><i class="fa-solid fa-book me-2 text-primary"></i><span id="pageTitle">Documentation</span></h6>
+            <h6 class="fw-bold mb-0 text-body"><i class="fa-solid fa-book me-2"></i><span id="pageTitle">Documentation</span></h6>
             <small class="text-secondary" style="font-size:11px;">Browse and read module documentation</small>
         </div>
     </div>
@@ -83,7 +83,7 @@ async function loadFileList() {
                 </div>`;
             docContent.innerHTML = `
                 <div class="text-center text-secondary small py-5">
-                    <i class="fa-solid fa-folder-open text-primary fa-lg mb-2 d-block"></i>
+                    <i class="fa-solid fa-folder-open fa-lg mb-2 d-block"></i>
                     This module has no documents to display yet.
                     <br><small class="text-secondary">Check back later or contact your administrator.</small>
                 </div>`;
@@ -101,7 +101,7 @@ async function loadFileList() {
                 </div>`;
             docContent.innerHTML = `
                 <div class="text-center text-secondary small py-5">
-                    <i class="fa-solid fa-folder-open text-primary fa-lg mb-2 d-block"></i>
+                    <i class="fa-solid fa-folder-open fa-lg mb-2 d-block"></i>
                     This module has no documents to display yet.
                     <br><small class="text-secondary">Check back later or contact your administrator.</small>
                 </div>`;
@@ -111,7 +111,7 @@ async function loadFileList() {
         fileList.innerHTML = '';
         mdFiles.forEach(function(file, index) {
             const btn       = document.createElement('button');
-            btn.className   = 'btn btn-sm w-100 text-start mb-1 btn-outline-primary';
+            btn.className   = 'btn btn-sm w-100 text-start mb-1 btn-outline-secondary';
             btn.innerHTML   = `<i class="fa-regular fa-file-lines me-2"></i>${file.name.replace('.md', '').replace(/-/g, ' ')}`;
             btn.onclick     = () => loadFileContent(file.download_url, btn);
             fileList.appendChild(btn);
@@ -136,11 +136,11 @@ async function loadFileContent(url, activeBtn) {
     const docContent = document.getElementById('docContent');
 
     document.querySelectorAll('#fileList button').forEach(b => {
-        b.classList.remove('btn-primary', 'text-white');
-        b.classList.add('btn-outline-primary');
+        b.classList.remove('btn-dark', 'text-white');
+        b.classList.add('btn-outline-secondary');
     });
-    activeBtn.classList.remove('btn-outline-primary');
-    activeBtn.classList.add('btn-primary', 'text-white');
+    activeBtn.classList.remove('btn-outline-secondary');
+    activeBtn.classList.add('btn-dark', 'text-white');
 
     docContent.innerHTML = `<div class="text-secondary small text-center py-5"><i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...</div>`;
 

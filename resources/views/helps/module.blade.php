@@ -4,12 +4,12 @@
 
 <div class="bg-body border-bottom py-3">
     <div class="container-fluid px-4 d-flex align-items-center gap-3">
-        <a href="/help-support/helps.index" class="btn btn-sm btn-outline-primary align-self-start">
+        <a href="/help-support/helps.index" class="btn btn-sm btn-outline-dark align-self-start">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
         <div>
-            <h5 class="fw-bold mb-0 text-body"><i class="fa-solid fa-cubes me-2 text-primary"></i>Module Documentation</h5>
-            <small class="text-secondary">Select a module to view its documentation</small>
+            <h6 class="fw-bold mb-0 text-body"><i class="fa-solid fa-cubes me-2"></i></i>Module Documentation</h6>
+            <p class="text-secondary small mb-0">Select a module to view its documentation</p>
         </div>
     </div>
 </div>
@@ -26,7 +26,7 @@
 
 @push('scripts')
 <script>
-const SANCTUM_TOKEN = '79|0r1tKP0WcXAHr3dPVxj7Ahxp4zgzrOd1D4q0ixnKfdde7f15';
+const SANCTUM_TOKEN = '84|IANam3GUYiEerVc2PgyzMu5LZVKh7O5sWOE2dGiP30ca4892';
 
 async function loadModules() {
     const container = document.getElementById('modulesContainer');
@@ -51,17 +51,15 @@ async function loadModules() {
                 <div class="col-lg-4 col-md-6">
                     <div class="border rounded-3 p-3 h-100 d-flex flex-column">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <div class="rounded-2 bg-primary bg-opacity-10 p-2 d-flex align-items-center justify-content-center">
-                                <i class="${icon} text-primary"></i>
-                            </div>
+                            <i class="${icon}"></i>
                             <h6 class="fw-bold small mb-0 text-body">${mod.name}</h6>
                         </div>
                         <p class="text-secondary small mb-3 flex-grow-1">${mod.description}</p>
                         <div>
-    <a href="/help-support/helps.docs?module=${mod.name}&uid=${mod.uid}" class="btn btn-sm btn-outline-primary">
-        <i class="fa-solid fa-book me-1"></i>View Docs
-    </a>
-</div>
+                            <a href="/help-support/helps.docs?module=${mod.name}&uid=${mod.uid}" class="btn btn-sm btn-outline-dark">
+                                <i class="fa-solid fa-book me-1"></i>View Docs
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
