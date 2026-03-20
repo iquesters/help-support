@@ -8,7 +8,7 @@
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
         <div>
-            <h6 class="fw-bold mb-0 text-body"><i class="fa-solid fa-cubes me-2"></i></i>Module Documentation</h6>
+            <h6 class="fw-bold mb-0 text-body"><i class="fa-solid fa-cubes me-2"></i>Module Documentation</h6>
             <p class="text-secondary small mb-0">Select a module to view its documentation</p>
         </div>
     </div>

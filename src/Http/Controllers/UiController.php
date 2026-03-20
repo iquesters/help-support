@@ -50,21 +50,22 @@ class UiController extends Controller
     
     // Added to ensure file content is part of the cache.
     public function getDocFile(Request $request)
-{
-    $url = $request->query('url');
-    if (!$url) return response()->json(['error' => 'No URL provided'], 400);
+    {
+        $url = $request->query('url');
+        if (!$url) return response()->json(['error' => 'No URL provided'], 400);
 
-    // Cache the raw markdown file content using a hash of the URL as the key
-    $cacheKey = 'github_file_' . md5($url);
+        // Cache the raw markdown file content using a hash of the URL as the key
+        $cacheKey = 'github_file_' . md5($url);
 
-    $content = Cache::remember($cacheKey, now()->addHours(6), function () use ($url) {
-        // Only hits raw.githubusercontent.com on first load or after cache expires
-        $response = Http::get($url);
-        return $response->ok() ? $response->body() : null;
-    });
+        $content = Cache::remember($cacheKey, now()->addHours(6), function () use ($url) {
+            // Only hits raw.githubusercontent.com on first load or after cache expires
+            $response = Http::get($url);
+            return $response->ok() ? $response->body() : null;
+        });
 
-    return response($content)->header('Content-Type', 'text/plain');
-}
+        return response($content)->header('Content-Type', 'text/plain');
+    }
+
     protected function resolvePackageViewName(string $viewName): string
     {
         $normalizedView = trim($viewName);
