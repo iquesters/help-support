@@ -145,7 +145,7 @@ async function loadFileContent(url, activeBtn) {
     docContent.innerHTML = `<div class="text-secondary small text-center py-5"><i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...</div>`;
 
     try {
-        const res  = await fetch(url);
+        const res  = await fetch(`/help-support/docs/file?url=${encodeURIComponent(url)}`);
         const text = await res.text();
         docContent.innerHTML = `<div class="markdown-content small">${marked.parse(text, { renderer })}</div>`;
     } catch(err) {
