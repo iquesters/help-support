@@ -37,7 +37,7 @@ class UiController extends Controller
 
     public function getModuleDocs(string $module)
     {
-        $files = Cache::remember("github_docs_{$module}", now()->addHours(6), function () use ($module) {
+        $files = Cache::remember("github_docs_{$module}", now()->addHours(24), function () use ($module) { // cache: 6 hours -> 24 hours
             $response = Http::withHeaders([
                 'Accept' => 'application/vnd.github.v3+json'
             ])->get("https://api.github.com/repos/iquesters/{$module}/contents/docs");
@@ -57,7 +57,7 @@ class UiController extends Controller
         // Cache the raw markdown file content using a hash of the URL as the key
         $cacheKey = 'github_file_' . md5($url);
 
-        $content = Cache::remember($cacheKey, now()->addHours(6), function () use ($url) {
+        $content = Cache::remember($cacheKey, now()->addHours(24), function () use ($url) { // cache: 6 hours -> 24 hours
             // Only hits raw.githubusercontent.com on first load or after cache expires
             $response = Http::get($url);
             return $response->ok() ? $response->body() : null;
