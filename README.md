@@ -1,43 +1,103 @@
 # Help Support
 
-The `help-support` package provides a simple UI entry point for package-scoped Blade views.
+The `help-support` package provides an in-app documentation browser for installed Iquesters modules.
 
 ## Package Wiring
 
 - Service provider: `Iquesters\HelpSupport\HelpSupportServiceProvider`
-- View namespace: `helpsupport::`
-- Base layout: `helpsupport::layouts.app`
+- view namespace: `help-support::`
+- Blade pages use `@extends(app('app.layout'))`
+- package configuration is managed through `HelpSupportConf`
 
-## UI Route
-
-The package exposes a generic UI route:
+## Routes
 
 - `GET /help-support/{viewName}`
+- `GET /help-support/docs/files/{module}`
+- `GET /help-support/docs/file?url=...`
 
-This route is handled by:
+These routes are handled by `Iquesters\HelpSupport\Http\Controllers\UiController`.
 
-- `Iquesters\HelpSupport\Http\Controllers\UiController@show`
+## What It Does
 
-## View Resolution
-
-The UI controller converts a passed view name into the package namespace.
-
-Examples:
-
-- Request: `/help-support/helps.index`
-- Resolved view: `helpsupport::helps.index`
-
-- Request: `/help-support/helps/create`
-- Resolved view: `helpsupport::helps.create`
-
-If the resolved view does not exist, the controller returns `404`.
+- shows the current user only the modules they can access
+- loads documentation file lists from GitHub repositories
+- supports nested markdown files under the configured docs root
+- enforces role-based documentation visibility
+- caches both docs file lists and raw markdown content
 
 ## Current Views
 
-- `helpsupport::layouts.app`
-- `helpsupport::helps.index`
+- `help-support::helps.index`
+- `help-support::helps.module`
+- `help-support::helps.docs`
+
+## Documentation Source
+
+By default, docs are read from:
+
+- repository owner: `iquesters`
+- docs root path: `docs/`
+- default branch fallback: `main`
+
+These values are configurable in `HelpSupportConf`.
+
+## Visibility Rules
+
+- full-access roles are configured through `HelpSupportConf::docs_full_access_roles`
+- default visible docs paths are configured through `HelpSupportConf::docs_default_visible_paths`
+
+Typical default behavior:
+
+- `super-admin` and `iq-developer` can view all docs under `docs/**`
+- other users can view only `docs/users/**`
+
+## Recommended Docs Folder Structure
+
+Inside each module repository, organize documentation by audience first:
+
+```text
+docs/
+  users/
+    getting-started.md
+    faq.md
+    profile/
+      account-settings.md
+
+  admin/
+    dashboard/
+      overview.md
+    module-management.md
+    role-assignment.md
+
+  developer/
+    architecture.md
+    api/
+      authentication.md
+      webhooks.md
+    deployment/
+      environment.md
+
+  shared/
+    glossary.md
+    release-notes.md
+```
+
+Recommended usage:
+
+- keep end-user documentation inside `docs/users/`
+- keep privileged operational docs inside `docs/admin/`
+- keep technical implementation and integration docs inside `docs/developer/`
+- keep cross-audience references, release notes, and shared terminology inside `docs/shared/`
+
+This structure works well when a module has multiple documentation types, because users can immediately understand where to add new files:
+
+- user-facing guides: `docs/users/`
+- admin and support procedures: `docs/admin/`
+- developer and API references: `docs/developer/`
+- common references: `docs/shared/`
 
 ## Notes
 
-- The package currently uses a dynamic view-name route for quick UI scaffolding.
-- If the package grows, replace the dynamic route with explicit feature routes for better clarity and access control.
+- nested markdown files are supported
+- raw GitHub file access is revalidated in the controller before content is returned
+- see `docs/docs-access-flow.md` for the full request and caching flow

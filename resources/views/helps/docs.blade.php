@@ -114,7 +114,11 @@ async function loadFileList() {
         mdFiles.forEach(function(file, index) {
             const btn       = document.createElement('button');
             btn.className   = 'btn btn-sm w-100 text-start mb-1 btn-outline-secondary';
-            btn.innerHTML   = `<i class="fa-regular fa-file-lines me-2"></i>${file.name.replace('.md', '').replace(/-/g, ' ')}`;
+            const label = (file.path || file.name)
+                .replace(/^docs\//, '')
+                .replace('.md', '')
+                .replace(/-/g, ' ');
+            btn.innerHTML   = `<i class="fa-regular fa-file-lines me-2"></i>${label}`;
             btn.onclick     = () => loadFileContent(file.download_url, btn);
             fileList.appendChild(btn);
             if (index === 0) btn.click();

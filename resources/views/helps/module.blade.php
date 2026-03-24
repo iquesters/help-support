@@ -16,7 +16,7 @@
 
 <div class="container-fluid px-4 py-3">
     <div class="row g-3" id="modulesContainer">
-        @forelse(($installedModules ?? collect())->where('name', '!=', 'help-support') as $mod)
+        @forelse(($installedModules ?? collect()) as $mod)
             <div class="col-lg-4 col-md-6">
                 <div class="border rounded-3 p-3 h-100 d-flex flex-column">
                     <div class="d-flex align-items-center gap-2 mb-2">
