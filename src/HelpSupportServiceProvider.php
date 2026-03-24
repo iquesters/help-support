@@ -2,74 +2,92 @@
 
 namespace Iquesters\HelpSupport;
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Console\Command;
 use Illuminate\Support\ServiceProvider;
+use Iquesters\Foundation\Enums\Module;
+use Iquesters\Foundation\Support\ConfProvider;
+use Iquesters\Foundation\System\Traits\Loggable;
+use Iquesters\HelpSupport\Config\HelpSupportConf;
+use Iquesters\HelpSupport\Database\Seeders\HelpSupportSeeder;
+use Iquesters\UserInterface\Config\UserInterfaceConf;
 
 class HelpSupportServiceProvider extends ServiceProvider
 {
+    use Loggable;
+
     public function register(): void
     {
-        Log::debug('HelpSupportServiceProvider register started', [
-            'provider' => static::class,
-        ]);
+        ConfProvider::register(Module::HELP_SUPPORT, HelpSupportConf::class);
+
+        $this->registerSeedCommand();
     }
 
     public function boot(): void
     {
-        Log::debug('HelpSupportServiceProvider boot started', [
-            'provider' => static::class,
-        ]);
-
         $this->registerPackageRoutes();
         $this->registerPackageViews();
+        $this->app->instance('app.layout', $this->getAppLayout());
 
-        Log::debug('HelpSupportServiceProvider boot completed', [
-            'provider' => static::class,
-        ]);
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                'command.help-support.seed',
+            ]);
+        }
+
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/help-support'),
+        ], 'help-support-config');
     }
 
     protected function registerPackageRoutes(): void
     {
-        $routesPath = __DIR__ . '/../routes/web.php';
-
-        if (! is_file($routesPath)) {
-            Log::warning('Help support routes file not found, skipping route registration', [
-                'provider' => static::class,
-                'path'     => $routesPath,
-            ]);
-            return;
-        }
-
-        $this->loadRoutesFrom($routesPath);
-
-        Log::debug('Help support routes registered', [
-            'provider' => static::class,
-            'path'     => $routesPath,
-        ]);
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 
     protected function registerPackageViews(): void
     {
-        $viewsPath = __DIR__ . '/../resources/views';
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'help-support');
+    }
 
-        if (! is_dir($viewsPath)) {
-            Log::warning('Help support views directory not found, skipping view registration', [
-                'provider' => static::class,
-                'path'     => $viewsPath,
-            ]);
-            return;
+    protected function getAppLayout(): string
+    {
+        if (class_exists(UserInterfaceConf::class)) {
+            try {
+                $uiConf = ConfProvider::from(Module::USER_INFE);
+
+                if (method_exists($uiConf, 'ensureLoaded')) {
+                    $uiConf->ensureLoaded();
+                }
+
+                return $uiConf->app_layout;
+            } catch (\Throwable $e) {
+                $this->logWarning('HelpSupport: failed to load UserInterface app layout: ' . $e->getMessage());
+            }
         }
 
-        $this->loadViewsFrom($viewsPath, 'help-support');
+        return 'userinterface::layouts.app';
+    }
 
-        $this->publishes([
-            $viewsPath => resource_path('views/vendor/help-support'),
-        ], 'help-support-views');
+    protected function registerSeedCommand(): void
+    {
+        $this->app->singleton('command.help-support.seed', function ($app) {
+            return new class extends Command {
+                protected $signature = 'help-support:seed';
+                protected $description = 'Seed Help Support module data';
 
-        Log::debug('Help support views registered', [
-            'provider'  => static::class,
-            'path'      => $viewsPath,
-            'namespace' => 'help-support',
-        ]);
+                public function handle(): int
+                {
+                    $this->info('Running Help Support Seeder...');
+
+                    $seeder = new HelpSupportSeeder();
+                    $seeder->setCommand($this);
+                    $seeder->run();
+
+                    $this->info('Help Support seeding completed!');
+
+                    return self::SUCCESS;
+                }
+            };
+        });
     }
 }

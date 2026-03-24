@@ -2,6 +2,8 @@
 
 namespace Iquesters\HelpSupport\Http\Controllers;
 
+use Iquesters\Foundation\Enums\Module;
+use Iquesters\Foundation\Support\ConfProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Routing\Controller;
@@ -37,7 +39,9 @@ class UiController extends Controller
 
     public function getModuleDocs(string $module)
     {
-        $files = Cache::remember("github_docs_{$module}", now()->addHours(24), function () use ($module) { // cache: 6 hours -> 24 hours
+        $cacheHours = $this->getDocsCacheHours();
+
+        $files = Cache::remember("github_docs_{$module}", now()->addHours($cacheHours), function () use ($module) {
             $response = Http::withHeaders([
                 'Accept' => 'application/vnd.github.v3+json'
             ])->get("https://api.github.com/repos/iquesters/{$module}/contents/docs");
@@ -56,8 +60,9 @@ class UiController extends Controller
 
         // Cache the raw markdown file content using a hash of the URL as the key
         $cacheKey = 'github_file_' . md5($url);
+        $cacheHours = $this->getDocsCacheHours();
 
-        $content = Cache::remember($cacheKey, now()->addHours(24), function () use ($url) { // cache: 6 hours -> 24 hours
+        $content = Cache::remember($cacheKey, now()->addHours($cacheHours), function () use ($url) {
             // Only hits raw.githubusercontent.com on first load or after cache expires
             $response = Http::get($url);
             return $response->ok() ? $response->body() : null;
@@ -78,5 +83,20 @@ class UiController extends Controller
         }
 
         return 'help-support::' . $normalizedView;
+    }
+
+    protected function getDocsCacheHours(): int
+    {
+        try {
+            $conf = ConfProvider::from(Module::HELP_SUPPORT);
+
+            if (method_exists($conf, 'ensureLoaded')) {
+                $conf->ensureLoaded();
+            }
+
+            return max(1, (int) ($conf->docs_cache_hours ?? 24));
+        } catch (\Throwable) {
+            return 24;
+        }
     }
 }

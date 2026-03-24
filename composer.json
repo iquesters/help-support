@@ -1,6 +1,5 @@
 {
   "name": "iquesters/help-support",
-  "version": "1.0.0",
   "description": "Help support package",
   "type": "library",
   "require": {
@@ -13,7 +12,8 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Iquesters\\HelpSupport\\": "src/"
+      "Iquesters\\HelpSupport\\": "src/",
+      "Iquesters\\HelpSupport\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "authors": [

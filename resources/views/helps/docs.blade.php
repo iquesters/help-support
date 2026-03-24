@@ -1,10 +1,10 @@
-@extends('help-support::layouts.app')
+@extends(app('app.layout'))
 
 @section('content')
 
 <div class="bg-body border-bottom py-2">
     <div class="container-fluid px-3 d-flex align-items-center gap-3">
-        <a href="/help-support/helps.module" class="btn btn-sm btn-outline-dark align-self-start">
+        <a href="{{ route('helpsupport.ui.show', ['viewName' => 'helps.module']) }}" class="btn btn-sm btn-outline-dark align-self-start">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
         <div>
@@ -51,6 +51,8 @@ const params     = new URLSearchParams(window.location.search);
 const moduleName = params.get('module') || '';
 const moduleUid  = params.get('uid')    || '';
 const repoName   = moduleName;
+const filesApiBaseUrl = @json(route('helpsupport.docs.files', ['module' => '__MODULE__']));
+const fileContentUrl = @json(route('helpsupport.docs.file'));
 
 document.getElementById('pageTitle').textContent = moduleName + ' — Documents';
 
@@ -70,7 +72,7 @@ renderer.heading = function(text, level) {
 async function loadFileList() {
     const fileList   = document.getElementById('fileList');
     const docContent = document.getElementById('docContent');
-    const apiUrl = `/help-support/docs/files/${repoName}`;
+    const apiUrl = filesApiBaseUrl.replace('__MODULE__', encodeURIComponent(repoName));
 
     try {
         const res = await fetch(apiUrl);
@@ -145,7 +147,7 @@ async function loadFileContent(url, activeBtn) {
     docContent.innerHTML = `<div class="text-secondary small text-center py-5"><i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...</div>`;
 
     try {
-        const res  = await fetch(`/help-support/docs/file?url=${encodeURIComponent(url)}`);
+        const res  = await fetch(`${fileContentUrl}?url=${encodeURIComponent(url)}`);
         const text = await res.text();
         docContent.innerHTML = `<div class="markdown-content small">${marked.parse(text, { renderer })}</div>`;
     } catch(err) {

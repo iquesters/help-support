@@ -1,4 +1,4 @@
-    @extends('help-support::layouts.app')
+@extends(app('app.layout'))
 
     @section('content')
 
@@ -23,7 +23,7 @@
                     <p class="fw-bold small mb-3"><i class="fa-solid fa-book me-2"></i>Module Documentation</p>
                     <div class="row g-2">
                         @foreach([
-                            ['url'=>'/help-support/helps.module','title'=>'Getting Started', 'desc'=>'Learn the basics of Iquesters',   'updated'=>'2 days ago', 'link'=>true],
+                            ['url'=>route('helpsupport.ui.show', ['viewName' => 'helps.module']),'title'=>'Getting Started', 'desc'=>'Learn the basics of Iquesters',   'updated'=>'2 days ago', 'link'=>true],
                             ['url'=>'#',                         'title'=>'User Guide',       'desc'=>'Complete guide for end users',    'updated'=>'1 week ago', 'link'=>false],
                             ['url'=>'#',                         'title'=>'Best Practices',   'desc'=>'Tips for optimal usage',          'updated'=>'3 days ago', 'link'=>false],
                             ['url'=>'#',                         'title'=>'Troubleshooting',  'desc'=>'Common issues and solutions',     'updated'=>'5 days ago', 'link'=>false],
@@ -101,26 +101,26 @@
         </div>
     </div>
 
-    @endsection
+@endsection
 
-    @push('scripts')
-    <script>
-    function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
-    function sendChat() {
-        const input = document.getElementById('chatInput');
-        const text  = input.value.trim();
-        if (!text) return;
-        appendBubble(text, 'user');
-        input.value = '';
-        setTimeout(() => appendBubble('I cannot help you with this right now.', 'bot'), 400);
-    }
-    function appendBubble(text, role) {
-        const box = document.getElementById('chatMessages');
-        const b   = document.createElement('div');
-        b.className = role === 'user' ? 'align-self-end bg-primary text-white rounded-3 px-3 py-2 small' : 'align-self-start bg-body-secondary text-body rounded-3 px-3 py-2 small';
-        b.textContent = text;
-        box.appendChild(b);
-        box.scrollTop = box.scrollHeight;
-    }
-    </script>
-    @endpush
+@push('scripts')
+<script>
+function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const text  = input.value.trim();
+    if (!text) return;
+    appendBubble(text, 'user');
+    input.value = '';
+    setTimeout(() => appendBubble('I cannot help you with this right now.', 'bot'), 400);
+}
+function appendBubble(text, role) {
+    const box = document.getElementById('chatMessages');
+    const b   = document.createElement('div');
+    b.className = role === 'user' ? 'align-self-end bg-primary text-white rounded-3 px-3 py-2 small' : 'align-self-start bg-body-secondary text-body rounded-3 px-3 py-2 small';
+    b.textContent = text;
+    box.appendChild(b);
+    box.scrollTop = box.scrollHeight;
+}
+</script>
+@endpush
