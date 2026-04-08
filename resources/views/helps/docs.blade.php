@@ -2,8 +2,8 @@
 
 @section('content')
 
-<div class="bg-body border-bottom py-2">
-    <div class="container-fluid px-3 d-flex align-items-center gap-3">
+<div class="bg-body py-2">
+    <div class="container-fluid px-2 d-flex align-items-center gap-3">
         <a href="{{ route('helpsupport.ui.show', ['viewName' => 'helps.module']) }}" class="btn btn-sm btn-outline-dark align-self-start">
             <i class="fa-solid fa-arrow-left me-1"></i>Back
         </a>
@@ -14,39 +14,34 @@
     </div>
 </div>
 
-<div class="container-fluid px-3 py-2">
+<div class="container-fluid px-2 py-2">
     <div class="row g-2" style="min-height:85vh;">
 
         {{-- LEFT SIDEBAR --}}
         <div class="col-md-3">
             <div class="border rounded-3 p-2 h-100">
-                <div id="fileList">
-                    <div class="text-secondary small text-center py-3">
-                        <i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...
-                    </div>
-                </div>
+                <div id="fileList"></div>
             </div>
         </div>
 
         {{-- RIGHT CONTENT --}}
         <div class="col-md-9" style="position:sticky;top:1rem;height:fit-content;">
-            <div class="border rounded-3 p-3" id="docContent" style="height:85vh;overflow-y:auto;">
-                <div class="text-secondary small text-center py-5">
-                    <i class="fa-solid fa-spinner fa-spin fa-lg mb-2 d-block"></i>
-                    Loading...
-                </div>
-            </div>
+            <div class="border rounded-3 p-3" id="docContent" style="height:85vh;overflow-y:auto;"></div>
         </div>
 
     </div>
 </div>
 
 @endsection
-
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <script>
 
+function loaderHtml() {
+    return `<div class="text-secondary small text-center py-5">
+                <i class="fa-solid fa-spinner fa-spin fa-lg mb-2 d-block"></i>Loading...
+            </div>`;
+}
 const params     = new URLSearchParams(window.location.search);
 const moduleName = params.get('module') || '';
 const moduleUid  = params.get('uid')    || '';
@@ -69,10 +64,79 @@ renderer.heading = function(text, level) {
     return `<p class="${classes[level] || 'small fw-bold'}">${text}</p>`;
 };
 
+// new additions
+
+function buildTree(files) {
+    const tree = {};
+    files.forEach(file => {
+        const parts = (file.path || file.name).replace(/^docs\//, '').replace('.md', '').split('/');
+        let node = tree;
+        parts.forEach((part, i) => {
+            if (i === parts.length - 1) {
+                if (!node.__files) node.__files = [];
+                node.__files.push({ label: part.replace(/-/g, ' '), file });
+            } else {
+                if (!node[part]) node[part] = {};
+                node = node[part];
+            }
+        });
+    });
+    return tree;
+}
+
+let firstBtn = null;
+
+function renderTree(node, container, depth = 0) {
+    (node.__files || []).forEach(({ label, file }) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm text-start mb-1 btn-outline-secondary';
+        btn.style.marginLeft = `${depth * 16}px`;
+        btn.style.width = `calc(100% - ${depth * 16}px)`;
+        btn.innerHTML = `<i class="fa-regular fa-file-lines me-2"></i>${label}`;
+        btn.onclick = () => loadFileContent(file.download_url, btn);
+        container.appendChild(btn);
+        if (!firstBtn) firstBtn = btn;
+    });
+
+    Object.keys(node).forEach(key => {
+        if (key === '__files') return;
+
+        const childWrap = document.createElement('div');
+        childWrap.style.display = 'none';
+
+        const folderBtn = document.createElement('button');
+        folderBtn.className = 'btn btn-sm text-start mb-1 d-flex align-items-center gap-1 text-body border-0';
+        folderBtn.style.marginLeft = `${depth * 16}px`;
+        folderBtn.style.width = `calc(100% - ${depth * 16}px)`;
+        folderBtn.innerHTML = `
+            <i class="fa-solid fa-chevron-right fa-xs me-1 toggle-icon" style="transition:transform .2s;"></i>
+            <i class="fa-regular fa-folder me-1 folder-icon"></i>
+            <span class="small fw-medium">${key}</span>`;
+
+        folderBtn.onclick = () => {
+            const open = childWrap.style.display !== 'none';
+            childWrap.style.display = open ? 'none' : 'block';
+            folderBtn.querySelector('.toggle-icon').style.transform = open ? '' : 'rotate(90deg)';
+            folderBtn.querySelector('.folder-icon').className = open
+                ? 'fa-regular fa-folder me-1 folder-icon'
+                : 'fa-regular fa-folder-open me-1 folder-icon';
+        };
+
+        container.appendChild(folderBtn);
+        container.appendChild(childWrap);
+        renderTree(node[key], childWrap, depth + 1);
+
+        if (depth === 0 && Object.keys(node).indexOf(key) === 0) folderBtn.click();
+    });
+}
+
 async function loadFileList() {
     const fileList   = document.getElementById('fileList');
     const docContent = document.getElementById('docContent');
     const apiUrl = filesApiBaseUrl.replace('__MODULE__', encodeURIComponent(repoName));
+
+    fileList.innerHTML   = loaderHtml();
+    docContent.innerHTML = loaderHtml();
 
     try {
         const res = await fetch(apiUrl);
@@ -111,18 +175,9 @@ async function loadFileList() {
         }
 
         fileList.innerHTML = '';
-        mdFiles.forEach(function(file, index) {
-            const btn       = document.createElement('button');
-            btn.className   = 'btn btn-sm w-100 text-start mb-1 btn-outline-secondary';
-            const label = (file.path || file.name)
-                .replace(/^docs\//, '')
-                .replace('.md', '')
-                .replace(/-/g, ' ');
-            btn.innerHTML   = `<i class="fa-regular fa-file-lines me-2"></i>${label}`;
-            btn.onclick     = () => loadFileContent(file.download_url, btn);
-            fileList.appendChild(btn);
-            if (index === 0) btn.click();
-        });
+        firstBtn = null;
+        renderTree(buildTree(mdFiles), fileList);
+        if (firstBtn) firstBtn.click();
 
     } catch(err) {
         fileList.innerHTML = `
@@ -141,14 +196,14 @@ async function loadFileList() {
 async function loadFileContent(url, activeBtn) {
     const docContent = document.getElementById('docContent');
 
+    docContent.innerHTML = loaderHtml();
+
     document.querySelectorAll('#fileList button').forEach(b => {
         b.classList.remove('btn-dark', 'text-white');
         b.classList.add('btn-outline-secondary');
     });
     activeBtn.classList.remove('btn-outline-secondary');
     activeBtn.classList.add('btn-dark', 'text-white');
-
-    docContent.innerHTML = `<div class="text-secondary small text-center py-5"><i class="fa-solid fa-spinner fa-spin me-1"></i>Loading...</div>`;
 
     try {
         const res  = await fetch(`${fileContentUrl}?url=${encodeURIComponent(url)}`);

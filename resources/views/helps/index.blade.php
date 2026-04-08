@@ -2,20 +2,20 @@
 
     @section('content')
 
-    <div class="bg-body border-bottom py-3">
-        <div class="container-fluid px-4">
+    <div class="bg-body py-3">
+        <div class="container-fluid px-2">
             <h6 class="fw-bold mb-0"><i class="fa-solid fa-circle-question me-2"></i>How can we help you?</h6>
-            <p class="text-secondary small mb-3">Search our documentation or ask the AI assistant below</p>
+            <p class="text-muted small mb-3">Search our documentation or ask the AI assistant below</p>
             <div class="col-md-5 col-lg-4 px-0">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="fa-solid fa-magnifying-glass text-secondary"></i></span>
-                    <input type="text" id="docSearch" class="form-control" placeholder="Search documentation..." autocomplete="off">
+                    <input type="text" id="docSearch" class="form-control" placeholder="Search documentation..." autocomplete="off" disabled>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid px-4 py-3">
+    <div class="container-fluid px-2 py-3">
         <div class="row g-3 align-items-stretch">
 
             <div class="col-lg-7">
@@ -23,27 +23,30 @@
                     <p class="fw-bold small mb-3"><i class="fa-solid fa-book me-2"></i>Module Documentation</p>
                     <div class="row g-2">
                         @foreach([
-                            ['url'=>route('helpsupport.ui.show', ['viewName' => 'helps.module']),'title'=>'Getting Started', 'desc'=>'Learn the basics of Iquesters',   'updated'=>'2 days ago', 'link'=>true],
-                            ['url'=>'#',                         'title'=>'User Guide',       'desc'=>'Complete guide for end users',    'updated'=>'1 week ago', 'link'=>false],
-                            ['url'=>'#',                         'title'=>'Best Practices',   'desc'=>'Tips for optimal usage',          'updated'=>'3 days ago', 'link'=>false],
-                            ['url'=>'#',                         'title'=>'Troubleshooting',  'desc'=>'Common issues and solutions',     'updated'=>'5 days ago', 'link'=>false],
+                            ['url'=>route('helpsupport.ui.show', ['viewName' => 'helps.module']),'title'=>'Getting Started', 'desc'=>'Learn the basics of Iquesters',   'updated'=>'2 days ago', 'link'=>true,  'primary'=>true],
+                            ['url'=>'#', 'title'=>'User Guide',      'desc'=>'Complete guide for end users',   'updated'=>'1 week ago', 'link'=>false, 'primary'=>false],
+                            ['url'=>'#', 'title'=>'Best Practices',  'desc'=>'Tips for optimal usage',         'updated'=>'3 days ago', 'link'=>false, 'primary'=>false],
+                            ['url'=>'#', 'title'=>'Troubleshooting', 'desc'=>'Common issues and solutions',    'updated'=>'5 days ago', 'link'=>false, 'primary'=>false],
                         ] as $card)
                         <div class="col-md-6">
-                            @if($card['link'])
-                                <a href="{{ $card['url'] }}" class="text-body text-decoration-none border rounded-3 p-3 h-100 d-block">
-                            @else
-                                <div class="border rounded-3 p-3 h-100">
-                            @endif
-                                <i class="fa-regular fa-file-lines d-block mb-2" style="font-size:1.2rem;"></i>
-                                <h6 class="fw-bold small mb-1">{{ $card['title'] }}</h6>
-                                <p class="text-secondary small mb-2">{{ $card['desc'] }}</p>
-                                <span class="text-secondary" style="font-size:11px;"><i class="fa-regular fa-clock me-1"></i>Updated {{ $card['updated'] }}</span>
-                            @if($card['link'])
-                                </a>
-                            @else
-                                </div>
-                            @endif
-                        </div>
+                        @if($card['link'])
+                            <a href="{{ $card['url'] }}" class="text-decoration-none border rounded-3 p-3 h-100 d-block {{ $card['primary'] ? 'text-primary' : 'text-body' }}">
+                        @else
+                            <div class="border rounded-3 p-3 h-100 position-relative">
+                        @endif
+                            <i class="fa-regular fa-file-lines d-block mb-2 {{ $card['primary'] ? 'text-primary' : 'text-secondary' }}" style="font-size:1.2rem;"></i>
+                            <h6 class="fw-bold small mb-1 {{ $card['primary'] ? 'text-primary' : 'text-body' }}">{{ $card['title'] }}</h6>
+                            <p class="text-secondary small mb-2">{{ $card['desc'] }}</p>
+                        @if(!$card['primary'])
+                            <span class="badge bg-secondary mb-1" style="font-size:10px;">Coming Soon</span><br>
+                        @endif
+                            <span class="text-secondary" style="font-size:11px;"><i class="fa-regular fa-clock me-1"></i>Updated {{ $card['updated'] }}</span>
+                        @if($card['link'])
+                            </a>
+                        @else
+                            </div>
+                        @endif
+                            </div>
                         @endforeach
                     </div>
                 </div>
@@ -67,8 +70,8 @@
                         </div>
                     </div>
                     <div class="input-group mt-auto">
-                        <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Type your question..." onkeydown="handleChatKey(event)">
-                        <button class="btn btn-info btn-sm text-white" onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
+                        <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Type your question..." disabled onkeydown="handleChatKey(event)">
+                        <button class="btn btn-info btn-sm text-white" disabled onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -76,7 +79,7 @@
         </div>
     </div>
 
-    <div class="container-fluid px-4 pb-4">
+    <div class="container-fluid px-2 pb-4">
         <div class="border rounded-3 p-3">
             <p class="fw-bold small mb-3"><i class="fa-solid fa-circle-question me-2"></i>Frequently Asked Questions</p>
             <div class="accordion" id="faqAccordion">
